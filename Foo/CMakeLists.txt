@@ -1,46 +1,46 @@
-# This file creates project 'Foo' with two library targets 'bar' and 'baz'.
-# Target 'bar' depends on 'baz'. After installation this project can be found
-# by 'find_package(... CONFIG)' command:
+# Этот файл создаёт проект 'Foo', который компилируется в две цели - библиотеки 'bar' и 'baz'.
+# Цель 'bar' зависит от 'baz'. После установки этот проект может быть найден
+# с помощью команды 'find_package(... CONFIG)':
 #
 #    find_package(Foo CONFIG REQUIRED)
 #    target_link_libraries(... Foo::bar)
 #
-# Note that requirements propagated automatically, for example:
-#   * Foo::baz linked automatically
+# Замечание: требования распространаются автоматически, например:
+#   * Foo::baz линкуется автоматически
 #   * <prefix>/include added to header search path
-#   * FOO_BAZ_DEBUG=1/FOO_BAR_DEBUG=1 added on Debug
-#   * FOO_BAZ_DEBUG=0/FOO_BAR_DEBUG=0 added on other configurations
+#   * FOO_BAZ_DEBUG=1/FOO_BAR_DEBUG=1 добавляется в конфигурации Debug
+#   * FOO_BAZ_DEBUG=0/FOO_BAR_DEBUG=0 добавляется в других конфигурациях
 
 ####
-# Set minimum version of CMake. Since command 'project' use
-# VERSION sub-option we need 3.0.
+# Установим минималльную версию CMake. Поскольку команда 'project' использует
+# параметр VERSION, нам необходима версия 3.0.
 cmake_minimum_required(VERSION 3.0)
 
 ####
-# Set variables:
+# Зададим переменные:
 #   * PROJECT_NAME
 #   * PROJECT_VERSION
 project(Foo VERSION 1.2.3)
 
 ####
-# Create targets
+# Создадим цели
 add_library(bar "Source/foo/Bar.cpp" "Source/foo/Bar.hpp")
 add_library(baz "Source/foo/Baz.cpp" "Source/foo/Baz.hpp")
 
 ####
-# Properties of targets
+# Свойства целей
 
-# Add definitions for targets
-# Values:
+# Добавим определения для целей
+# Значения:
 #   * Debug: -DFOO_BAR_DEBUG=1
 #   * Release: -DFOO_BAR_DEBUG=0
-#   * other: -DFOO_BAR_DEBUG=0
+#   * другие: -DFOO_BAR_DEBUG=0
 target_compile_definitions(bar PUBLIC "FOO_BAR_DEBUG=$<CONFIG:Debug>")
 target_compile_definitions(baz PUBLIC "FOO_BAZ_DEBUG=$<CONFIG:Debug>")
 
-# Generate:
-#   * ${CMAKE_CURRENT_BINARY_DIR}/generated_headers/foo/BAR_EXPORT.h with BAR_EXPORT
-#   * ${CMAKE_CURRENT_BINARY_DIR}/generated_headers/foo/BAZ_EXPORT.h with BAZ_EXPORT
+# Генерируем:
+#   * ${CMAKE_CURRENT_BINARY_DIR}/generated_headers/foo/BAR_EXPORT.h с BAR_EXPORT
+#   * ${CMAKE_CURRENT_BINARY_DIR}/generated_headers/foo/BAZ_EXPORT.h с BAZ_EXPORT
 # Renaming because:
 # * We need prefix 'foo' to fit OSX/iOS frameworks layout
 # * File name match name of the macro
